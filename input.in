@@ -1,0 +1,73 @@
+units	 metal
+dimension 3
+newton on
+processors * 18 *
+boundary p p p
+atom_style atomic
+
+#kim init EDIP_LAMMPS_Marks_2000_C__MO_374144505645_000 metal
+#kim init Sim_LAMMPS_LCBOP_LosFasolino_2003_C__SM_469631949122_000 metal
+kim init Sim_LAMMPS_AIREBO_Morse_OConnorAndzelmRobbins_2015_CH__SM_460187474631_000 metal
+#kim init DUNN_WenTadmor_2019v1_C__MO_584345505904_000 metal
+#--------------Create Atoms----------------
+
+variable a equal  2.4595
+variable acc equal  $a/sqrt(3.0)
+variable ap2 equal $a/2
+variable as3p2 equal $a*sqrt(3.0)/2
+variable h equal  1/3+0.01
+variable h2 equal 2/3
+variable s equal 216 # number of unitcells in each direction
+variable rx equal $a*$s
+variable ry equal $a*$s*sqrt(3)/2
+variable txy equal $a*$s/2
+
+lattice custom    1.0     &
+        a1       $a      0.0           0.0     &
+        a2     ${ap2}   ${as3p2}       0.0     &
+        a3      0.0      0.0          20.0     &
+        basis    $h      $h            0.5     &
+        basis    ${h2}      ${h2}            0.5     &
+
+
+region mySheet prism 0 ${rx} &
+                     0 ${ry}  &
+                     0 20  &
+                     ${txy} 0 0 &
+                     units box
+
+create_box 1 mySheet
+create_atoms 1 region mySheet
+
+mass * 12.0107
+velocity all create 100.0 5432373 dist gaussian
+
+#------------------
+kim interactions C
+#pair_coeff * * SiC.tersoff C
+
+#-------------
+neighbor 2.0 bin
+neigh_modify delay 3
+
+timestep 0.0001
+thermo_style custom step pe etotal temp
+thermo 1000
+
+dump graph all custom 100 out.graphene_* id type x y z vx vy vz
+
+min_style cg
+minimize 1e-6 1e-6 10000 10000
+#-----------------dynamics
+
+fix dynamics all nve
+
+fix heating all temp/berendsen 100.0 100.1 0.0001
+
+run 25000
+
+unfix heating
+
+#-----------
+unfix dynamics
+undump graph
