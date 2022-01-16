@@ -1,0 +1,13 @@
+gr_alkane.in                   - lammps input script
+
+c20_eicosane_flat-on_v2.lammps - lammps data file of one c20 alkane structure (edge-on)
+
+alkane_crystal.lammps          - lammps data file of the crystalline phase alkane structure
+
+crystalize_rectangle.m         - matlab script to create "alkane_crystal.lammps" from "c20_eicosane_flat-on_v2.lammps"
+
+C.lcbop                        - lammps potential file for graphene and graphite 
+                                 (https://openkim.org/id/Sim_LAMMPS_LCBOP_LosFasolino_2003_C__SM_469631949122_000)
+
+CH.airebo-m                    - lammps potential file for C-C and C-H interactions 
+                                 (https://openkim.org/id/Sim_LAMMPS_AIREBO_Morse_OConnorAndzelmRobbins_2015_CH__SM_460187474631_000)
